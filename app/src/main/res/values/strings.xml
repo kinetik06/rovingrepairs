@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Roving Repairs</string>
+    <string name="error_title">Sorry, man.</string>
+    <string name="error_message">There was an issue..We\'re trying to fix it!</string>
+    <string name="error_ok_button_text">OK, Thanks</string>
+    <string-array name="vehicle_makes">
+        <item>Acura</item>
+        <item>BMW</item>
+        <item>Buick</item>
+        <item>Cadillac</item>
+        <item>Chevrolet</item>
+        <item>Chrysler</item>
+        <item>Dodge</item>
+        <item>Ford</item>
+        <item>GMC</item>
+        <item>Honda</item>
+        <item>Hummer</item>
+        <item>Hyundai</item>
+        <item>Infiniti</item>
+        <item>Isuzu</item>
+        <item>Jaguar</item>
+        <item>Jeep</item>
+        <item>Kia</item>
+        <item>Lexus</item>
+        <item>Lincoln</item>
+        <item>Mazda</item>
+        <item>Mercedes-Benz</item>
+        <item>Mercury</item>
+        <item>Mini</item>
+        <item>Mitsubishi</item>
+        <item>Nissan</item>
+        <item>Pontiac</item>
+        <item>Saab</item>
+        <item>Saturn</item>
+        <item>Scion</item>
+        <item>Subaru</item>
+        <item>Toyota</item>
+    </string-array>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="auth_failed">Login Failed, If this keeps happening please contact us</string>
+    <string name="title_activity_register">Sign in</string>
+    <string name="BOOKEO_API_KEY">A9KTCENYKFC7UJ9XKYFXE41564PPF9JK15E53A1D0A5</string>
+    <string name="BOOKEO_API_KEY_TWO">AMRPTYEF9FC7UJ9XKYFXE41564PPF9JK15E53A1D0A5</string>
+    <string name="BOOKEO_SECRET_KEY">ndtknLQ1AFYOg38OBqU1FfYH7xMRLohJ</string>
+    <string name="BOOKEO_URL">https://api.bookeo.com/v2/</string>
+
+</resources>

@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "290273319982",
+    "firebase_url": "https://roving-repairs-ac772.firebaseio.com",
+    "project_id": "roving-repairs-ac772",
+    "storage_bucket": "roving-repairs-ac772.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290273319982:android:e1d0f0af72c011fb",
+        "android_client_info": {
+          "package_name": "net.rovingrepairs.rovingrepairs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "290273319982-3m5hrvkc4k5csna1jkrlk57dc85tk8d0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT1gLAqR56na0vkRF2eVIPpy9uHkawSfw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290273319982:android:5a3cada4b0fdf4e1",
+        "android_client_info": {
+          "package_name": "com.zombietechinc.rovingrepairs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "290273319982-h1q8n7pjgt195scruhho4i918cd8g799.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zombietechinc.rovingrepairs",
+            "certificate_hash": "39cbe9c3f28beaf3363be1188012b0201ea353d9"
+          }
+        },
+        {
+          "client_id": "290273319982-3m5hrvkc4k5csna1jkrlk57dc85tk8d0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT1gLAqR56na0vkRF2eVIPpy9uHkawSfw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "290273319982-3m5hrvkc4k5csna1jkrlk57dc85tk8d0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
