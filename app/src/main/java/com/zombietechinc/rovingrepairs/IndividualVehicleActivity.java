@@ -3,9 +3,11 @@ package com.zombietechinc.rovingrepairs;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -17,13 +19,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,18 +57,35 @@ public class IndividualVehicleActivity extends AppCompatActivity {
     String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int MY_PERMISSIONS_REQUEST_WRITE = 1;
+    Uri photoURI;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
+    StorageReference vehicleRef;
+
+    final long ONE_MEGABYTE = 1024 * 1024;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_individual_vehicle);
         vehicleIMG = (ImageView)findViewById(R.id.vehicle_iv);
+
         mRecyclerView = (RecyclerView)findViewById(R.id.appointment_rv);
         ymmTV = (TextView)findViewById(R.id.ymm_tv);
         appointmentTV = (TextView)findViewById(R.id.appointment_tv);
         Intent intent = getIntent();
         vehicleKey = intent.getStringExtra("key");
+        vehicleRef = storageRef.child("vehicles/" + vehicleKey + ".jpg");
         userID = intent.getStringExtra("id");
+        if (vehicleRef != null){
+            try {
+                getVehiclePic();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference("vehicles/" + userID + "/" + vehicleKey);
         ref = mFirebaseDatabase.getReference("appointments/" + userID + "/" + vehicleKey);
@@ -178,7 +204,7 @@ public class IndividualVehicleActivity extends AppCompatActivity {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = vehicleKey;
 
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -207,18 +233,51 @@ public class IndividualVehicleActivity extends AppCompatActivity {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
+                photoURI = FileProvider.getUriForFile(this,
                         "com.zombietechinc.rovingrepairs.fileprovider",
                         photoFile);
+                Log.d("File Location: ", photoURI.toString());
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), photoURI);
-                    vehicleIMG.setImageBitmap(bitmap);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.d("error: ", e.toString());
+
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REQUEST_TAKE_PHOTO) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                if (photoURI != null) {
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), photoURI);
+                        Log.d("Bitmap set: ", bitmap.toString());
+                        UploadTask uploadTask = vehicleRef.putFile(photoURI);
+                        uploadTask.addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(IndividualVehicleActivity.this, "Photo could not be uploaded. Please check your connection.", Toast.LENGTH_LONG).show();
+
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Toast.makeText(IndividualVehicleActivity.this, "Photo uploaded successfully", Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+                        vehicleIMG.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.d("error: ", e.toString());
+                    }
                 }
+            }else {
+                Toast.makeText(this, "Couldn't update vehicle picture. Please try again later.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
             }
         }
     }
@@ -255,5 +314,39 @@ public class IndividualVehicleActivity extends AppCompatActivity {
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+    public void getVehiclePic() throws IOException {
+
+        final File localFile = File.createTempFile("images", "jpg");
+
+        vehicleRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                // Local temp file has been created
+                Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                vehicleIMG.setImageBitmap(bitmap);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+
+        /*vehicleRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // Data for "images/island.jpg" is returns, use this as needed
+               *//* Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0, (int) ONE_MEGABYTE);
+                vehicleIMG.setImageBitmap(bitmap);
+                Log.d("Bitmap set: ", bitmap.toString());*//*
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("Exception code: ", exception.toString());
+                // Handle any errors
+            }
+        });*/
     }
 }
