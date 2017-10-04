@@ -36,6 +36,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,6 +62,7 @@ public class IndividualVehicleActivity extends AppCompatActivity {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     StorageReference vehicleRef;
+    ChildEventListener childEventListener;
 
     final long ONE_MEGABYTE = 1024 * 1024;
 
@@ -161,7 +163,7 @@ public class IndividualVehicleActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
-        ref.addChildEventListener(new ChildEventListener() {
+        childEventListener = (new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getValue() != null) {
@@ -170,6 +172,23 @@ public class IndividualVehicleActivity extends AppCompatActivity {
                     mAppointments.add(appointment);
 
                     mAdapter.notifyDataSetChanged();
+                    for (int m = 0; m < mAppointments.size(); m++ ){
+                        Appointment appointment1 = mAppointments.get(m);
+                        Date date = new Date();
+                        RFC3339Date rfc3339Date = new RFC3339Date();
+                        try {
+                            Date parsedTime = rfc3339Date.parseRFC3339Date(appointment1.getStartTime());
+                            if (date.after(parsedTime)){
+                                Log.d("Appointment removed: ", appointment1.getBookingNumber());
+                                ref.removeValue();
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
                 }
             }
 
@@ -193,6 +212,7 @@ public class IndividualVehicleActivity extends AppCompatActivity {
 
             }
         });
+        ref.addChildEventListener(childEventListener);
     }
 
     @Override
@@ -300,6 +320,8 @@ public class IndividualVehicleActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     dispatchTakePictureIntent();
                     galleryAddPic();
+                    ref.addChildEventListener(childEventListener);
+                    mAdapter.notifyDataSetChanged();
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 

@@ -31,7 +31,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
             rv = (RecyclerView) itemView.findViewById(R.id.services_rv);
             serviceTV = (TextView)itemView.findViewById(R.id.service_tv);
             descriptionTV = (TextView)itemView.findViewById(R.id.description_tv);
-            vehicleimg = (ImageView)itemView.findViewById(R.id.serviceimg);
+            //vehicleimg = (ImageView)itemView.findViewById(R.id.serviceimg);
             duration =(TextView)itemView.findViewById(R.id.duration_tv);
             priceTV = (TextView)itemView.findViewById(R.id.price_tv);
         }

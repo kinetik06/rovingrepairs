@@ -1,6 +1,9 @@
 package com.zombietechinc.rovingrepairs;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,6 +13,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,6 +35,9 @@ import okhttp3.Response;
 
 public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleViewHolder>{
 
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageReference = storage.getReference("vehicles");
+    File localFile;
 
 
     public static class VehicleViewHolder extends RecyclerView.ViewHolder {
@@ -39,9 +52,9 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
             super(itemView);
             rv = (RecyclerView) itemView.findViewById(R.id.vehicle_rv);
             vehicleTV = (TextView)itemView.findViewById(R.id.vehicle_tv);
-            mileageTV = (TextView)itemView.findViewById(R.id.mileage_tv);
+            //mileageTV = (TextView)itemView.findViewById(R.id.mileage_tv);
             vehicleimg = (ImageView)itemView.findViewById(R.id.vehicleimg);
-            vinTV =(TextView)itemView.findViewById(R.id.vin_tv);
+            //vinTV =(TextView)itemView.findViewById(R.id.vin_tv);
 
         }
 
@@ -84,7 +97,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     }
 
     @Override
-    public void onBindViewHolder(VehicleViewHolder holder, int position) {
+    public void onBindViewHolder(final VehicleViewHolder holder, int position) {
         mVehicle = vehicles.get(position);
         vehicleType = String.valueOf(mVehicle.getYear()) + " " + mVehicle.getMake()
                 + " " + mVehicle.getModel();
@@ -96,6 +109,30 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
                 Log.d("Vehicle img touched: ", mVehicle.getModel());
             }
         });
+        storageReference = storage.getReference("vehicles/" + mVehicle.getUniqueKey() + ".jpg");
+        Log.d("Vehicle IDs: ", mVehicle.getUniqueKey());
+
+
+        try {
+            localFile = File.createTempFile("images", "jpg");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    // Local temp file has been created
+                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                    holder.vehicleimg.setImageBitmap(bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
+
 
         final Request request = new Request.Builder()
                 .url(vehicleImgURL)
@@ -121,6 +158,8 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     public int getItemCount() {
         return vehicles.size();
     }
+
+
 
 
 }

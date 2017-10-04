@@ -11,7 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        app:srcCompat="@drawable/car_holder"/>
+        app:srcCompat="@drawable/car_holder"
+        android:layout_margin="10dp"
+
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,69 +28,8 @@
             android:layout_height="wrap_content"
 
             android:paddingTop="20dp"
-            android:text="2000 Bugatti Stuvalo"/>
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mileage: "/>
-
-                <TextView
-                    android:id="@+id/mileage_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    android:layout_weight="1"
-                    android:text="150283"/>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Engine: "/>
-
-                <TextView
-                    android:id="@+id/engine_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="6.7L"/>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textView8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="VIN:"/>
-
-                <TextView
-                    android:id="@+id/vin_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="12jfurnkmt895784"/>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </TableLayout>
+            android:text="2000 Bugatti Stuvalo"
+            android:textSize="20dp"/>
 
     </LinearLayout>
 

@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -158,6 +159,8 @@ public class NativeAppointmentActivity extends AppCompatActivity {
                             JSONObject jsonObject = serviceData.getJSONObject(i);
                             String name = jsonObject.getString("name");
                             String description = jsonObject.getString("description");
+                            description = description.replace("<p>", "");
+                            description = description.replace("</p>", "");
                             String productId = jsonObject.getString("productId");
                             /*String price = "40";
                             String duration = "1 hour";*/
@@ -224,6 +227,7 @@ public class NativeAppointmentActivity extends AppCompatActivity {
             JSONObject price1 = newobject.getJSONObject("price");
             Log.d("PRICE", String.valueOf(price1));
             price = price1.getString("amount");
+            price = "Price: $" + price;
             Log.d("FINAL PRICE:  ", price);
         }
         return price;
@@ -233,8 +237,22 @@ public class NativeAppointmentActivity extends AppCompatActivity {
         String duration = "";
         int hours = jsonObject.getInt("hours");
         int minutes = jsonObject.getInt("minutes");
+        if (hours == 0){
+            duration = "Duration: " + String.valueOf(minutes) + " " + "minutes";
+        } else if (hours == 1 && minutes > 0) {
+            duration = "Duration: " + String.valueOf(hours) + "hour " + String.valueOf(minutes) + " " + "minutes";
+        } else if (hours > 1 && minutes > 0 ){
+            duration = "Duration: " + String.valueOf(hours) + "hours " + String.valueOf(minutes) + " " + "minutes" ;
+        } else if (hours == 1 && minutes == 0) {
+            duration = "Duration: " + String.valueOf(hours) + "hour ";
+        } else if (hours > 1 && minutes == 0) {
+            duration = "Duration: " + String.valueOf(hours) + "hours ";
+        }
+        else {
+            duration = "Duration: Unavailable";
+        }
 
-            duration = String.valueOf(hours) + "hours " + String.valueOf(minutes);
+
 
         return duration;
     }
