@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -63,6 +65,7 @@ public class IndividualVehicleActivity extends AppCompatActivity {
     StorageReference storageRef = storage.getReference();
     StorageReference vehicleRef;
     ChildEventListener childEventListener;
+    ProgressBar progressBar;
 
     final long ONE_MEGABYTE = 1024 * 1024;
 
@@ -72,7 +75,8 @@ public class IndividualVehicleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_individual_vehicle);
         vehicleIMG = (ImageView)findViewById(R.id.vehicle_iv);
-
+        progressBar = (ProgressBar)findViewById(R.id.progressBar2);
+        progressBar.setVisibility(View.INVISIBLE);
         mRecyclerView = (RecyclerView)findViewById(R.id.appointment_rv);
         ymmTV = (TextView)findViewById(R.id.ymm_tv);
         appointmentTV = (TextView)findViewById(R.id.appointment_tv);
@@ -287,6 +291,17 @@ public class IndividualVehicleActivity extends AppCompatActivity {
                                 Toast.makeText(IndividualVehicleActivity.this, "Photo uploaded successfully", Toast.LENGTH_LONG).show();
 
                             }
+                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                progressBar.setVisibility(View.VISIBLE);
+                                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                Log.d("Progress: ", String.valueOf(progress));
+                                progressBar.setProgress((int) progress);
+                                if ((int) progress == 100) {
+                                    progressBar.setVisibility(View.GONE);
+                                }
+                            }
                         });
                         vehicleIMG.setImageBitmap(bitmap);
                     } catch (IOException e) {
@@ -352,6 +367,17 @@ public class IndividualVehicleActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
+            }
+        }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                progressBar.setVisibility(View.VISIBLE);
+                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                progressBar.setProgress((int) progress);
+                if ((int) progress == 100) {
+                    progressBar.setVisibility(View.GONE);
+                }
+
             }
         });
 

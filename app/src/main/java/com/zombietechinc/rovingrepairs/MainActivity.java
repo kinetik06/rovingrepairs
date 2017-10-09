@@ -1,6 +1,7 @@
 package com.zombietechinc.rovingrepairs;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
@@ -74,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         mVehicleList = new ArrayList<>();
 
         mRecyclerView = (RecyclerView)findViewById(R.id.vehicle_rv);
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("From listener: ", user.getEmail());
                     ref = database.getReference("vehicles/" + userID);
 
+
                     firebaseAdapter = new FirebaseRecyclerAdapter <Vehicle, VehicleHolder>
                             (Vehicle.class, R.layout.vehicle_card, VehicleHolder.class, ref ) {
 
@@ -125,13 +130,18 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            Glide.with(MainActivity.this).using(new FirebaseImageLoader()).load(vehicleImgRef).error(R.drawable.car_holder).into(holder.vehicleimg);
+                            Glide.with(MainActivity.this)
+                                    .using(new FirebaseImageLoader())
+                                    .load(vehicleImgRef)
+                                    .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                                    .error(R.drawable.car_holder)
+                                    .into(holder.vehicleimg);
 
                         }
                     };
 
                     mRecyclerView.setAdapter(firebaseAdapter);
-
+                    firebaseAdapter.notifyDataSetChanged();
                     ref2 = database.getReference("users/" + userID);
                     ref2.addValueEventListener(new ValueEventListener() {
                         @Override
@@ -308,10 +318,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent1 = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent1);
                 return true;
-            case R.id.make_appointment:
-                Intent intent2 = new Intent(MainActivity.this, NativeAppointmentActivity.class);
-                startActivity(intent2);
-                return true;
+
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -360,6 +367,11 @@ public class MainActivity extends AppCompatActivity {
         return customerBookings;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseAdapter.cleanup();
     }
+}
 
 

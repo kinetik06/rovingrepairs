@@ -8,9 +8,6 @@
           android:icon="@drawable/signoutbtn"
           android:title="Edit Profile"
         />
-    <item android:id="@+id/make_appointment"
-          android:icon="@drawable/signoutbtn"
-          android:title="Make an Appointment"
-        />
+
 
 </menu>

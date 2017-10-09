@@ -66,7 +66,7 @@ public class ProfileActivity extends AppCompatActivity {
     ArrayList<String> idArrayList;
     String location;
     String location2;
-    Button mButton;
+
     String headertext = "";
     String updateCustomerURL;
     OkHttpClient client2 = new OkHttpClient();
@@ -79,7 +79,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        mButton = (Button)findViewById(R.id.button2);
+
 
         //client = new OkHttpClient.Builder().addNetworkInterceptor(new LoggingInterceptor()).build();
         mUser = new User();
@@ -203,41 +203,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                MediaType mediaType = MediaType.parse("application/json");
-                RequestBody body = RequestBody.create(mediaType, "{ \"firstName\" : \"Bob \",\r\n\t\"lastName\" : \" Ross\" , \r\n    \"emailAddress\" : \"rovingrepairs@gmail.com\" , \r\n \"streetAdress\": [{ \"address1\": \"3331 The Loop Rd. 23231\"}], \r\n\"phoneNumbers\" : [{ \"number\" : \"7849365\" , \"type\" : \"mobile\" }] } ");
-                final Request request = new Request.Builder()
-                        .url("https://api.bookeo.com/v2/customers?=&secretKey=ndtknLQ1AFYOg38OBqU1FfYH7xMRLohJ&apiKey=AMRPTYEF9FC7UJ9XKYFXE41564PPF9JK15E53A1D0A5")
-                        .post(body)
-                        .addHeader("content-type", "application/json")
-                        .addHeader("cache-control", "no-cache")
-                        .addHeader("postman-token", "27839720-3ff4-6f11-5f1b-799e826cdd75")
-                        .build();
-                Call call = client2.newCall(request);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-
-                        try {
-                            response = client2.newCall(request).execute();
-                            headertext = response.headers().toString();
-                            Log.d("Headers:  ", headertext);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-            }
-        });
 
     }
 
